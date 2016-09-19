@@ -1,31 +1,62 @@
 <?php
-/*****************************************************************************
-* Copyright (c) 2015, Aron Heinecke
-* All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-* 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-* 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-* 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-******************************************************************************/
-define('REDIRECT_URL', 'https://www.youtube.com/redirect?q=');
-define('PATTERN_PLAYLIST', '/\\A((https:\\/\\/|http:\\/\\/)|)((www\\.|m\\.)|)youtube\\.(com|de)\\/.*playlist\\?list=[a-zA-Z0-9_-]+/');
-define('PATTERN_VID_PLAYLIST', '/\\A((https:\\/\\/|http:\\/\\/)|)((www\\.|m\\.)|)youtube\\.(com|de)\\/.*watch\\?v=[a-zA-Z0-9_-]+.*\\&list=([a-zA-Z0-9_-]+)/');
-define('PATTERN_VIDEO', '/\\A((https:\\/\\/|http:\\/\\/)|)((www\\.|m\\.)|)youtube\\.(com|de)\\/.*watch\\?v=[a-zA-Z0-9_-]+/');
-define('PATTERN_VIDEO_SHORT', '/\\Ahttps?:\\/\\/youtu\\.be\\/[a-zA-Z0-9]+/');
-define('PATTERN_TWITCH', '/\\A((https:\\/\\/|http:\\/\\/)|)((www.|m\\.))twitch\\.tv\\/.*[a-zA-Z0-9_-]+\\/v\\/[a-zA-Z0-9_-]+/');
-define('TYPE_PLAYLIST', 1);
-define('TYPE_YTVID', 0);
-define('TYPE_TWITCH', 2);
-define('TYPE_SOUNDCLOUD', 3);
-define('TIMEZONE', 'Europe/Berlin');
+ - /*****************************************************************************
+ - * Copyright (c) 2015, Aron Heinecke
+ - * All rights reserved.
+ - * 
+ - * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+ - * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+ - * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ - * 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+ - * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ - ******************************************************************************/
 
+
+const REDIRECT_URL = 'https://www.youtube.com/redirect?q=';
+const PATTERN_PLAYLIST = '/\\A((https:\\/\\/|http:\\/\\/)|)((www\\.|m\\.)|)youtube\\.(com|de)\\/.*playlist\\?list=[a-zA-Z0-9_-]+/';
+const PATTERN_VID_PLAYLIST = '/\\A((https:\\/\\/|http:\\/\\/)|)((www\\.|m\\.)|)youtube\\.(com|de)\\/.*watch\\?v=[a-zA-Z0-9_-]+.*\\&list=([a-zA-Z0-9_-]+)/';
+const PATTERN_VIDEO = '/\\A((https:\\/\\/|http:\\/\\/)|)((www\\.|m\\.)|)youtube\\.(com|de)\\/.*watch\\?v=[a-zA-Z0-9_-]+/';
+const PATTERN_VIDEO_SHORT = '/\\Ahttps?:\\/\\/youtu\\.be\\/[a-zA-Z0-9]+/';
+const PATTERN_TWITCH = '/\\A((https:\\/\\/|http:\\/\\/)|)((www.|m\\.))twitch\\.tv\\/.*[a-zA-Z0-9_-]+\\/v\\/[a-zA-Z0-9_-]+/';
+const TYPE_PLAYLIST = 1;
+const TYPE_YTVID = 0;
+const TYPE_TWITCH = 2;
+const TYPE_SOUNDCLOUD = 3;
+const TIMEZONE = 'Europe/Berlin';
+const PERM_ADMIN = 'yayd_admin';
+
+const LUC = 'yayd_LUC';
+
+// --- Functions to be implemented per use case ---
+
+/**
+ * Retrieve user ID, use a const if no multiuser support is desired
+ * @return unknown
+ */
+function getUserID(){
+	return -1;
+}
+
+/**
+ * Check wether a user has the permissions or not
+ * @return true if user has permission
+ */
+function checkPerm($perm){
+	return true;
+}
+
+// --- General Code ---
+
+/**
+ * Content function
+ */
 //@Override
 function getContent() {
 	getYTTemplate();
 }
 
+/**
+ * Template generator
+ */
 function getYTTemplate() {
 	updateLUC(); ?>
 	<div class="container">
@@ -72,7 +103,7 @@ function getYTTemplate() {
 									<option value="-10">Mobile
 								</select>
 							</span>
-							<input class="form-control" type="text" placeholder="http://www.twitch.tv/canal/v/" id="twdownllink" autocomplete="off" required autofocus>
+							<input class="form-control" type="text" placeholder="http://www.twitch.tv/channel/v/" id="twdownllink" autocomplete="off" required autofocus>
 						</div>
 						<button type="button" id="GYT" class="btn btn-default" >
 							<i class="fa fa-plus"></i> Add
@@ -101,18 +132,16 @@ function getYTTemplate() {
 							<input class="form-control" type="text" placeholder="https://www.youtube.com/playlist?list=" id="pl_ytdownllink" autocomplete="off" required autofocus>
 						</div>
 						<div class="form-group input-group">
-<!-- 						<div class="form-group input-group"> -->
 						<div class="form-group col-sm-3">
 							<label for="pl_from">From</label>
 							<input type="number" id="pl_from" value="-1" class="form-control col-sm-2" min="-1" step="1" data-bind="value:plFrom" />
 						</div>
-<!-- 						<div class="form-group input-group"> -->
 						<div class="form-group col-sm-3">
 							<label for="pl_to">To</label>
 							<input type="number" id="pl_to" value="-1" class="form-control col-sm-2" min="-1" step="1" data-bind="value:plTo" />
 						</div>
 						<div class="col-sm-3 checkbox">
-								<input type="checkbox" id="pl_zip" disabled><i class="fa fa-compress"></i> zip
+								<input type="checkbox" id="pl_split"><i class="fa fa-compress"></i> split jobs
 							</div>
 						</div>
 						
@@ -173,21 +202,24 @@ function getYTTemplate() {
 	        
 	      </div>
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 <?php }
 
+/**
+ * Ajax request handler function
+ */
 //@Override
 function getAjax(){
-	require 'includes/ytdownload.db.inc.php';
-	$ytdb = new ytdownlDB();
+	require 'includes/yayd.db.inc.php';
+	$ytdb = new \yayd\yaydDB();
 	switch($_POST['ajaxCont']){
 		case 'querylist':
 			date_default_timezone_set(TIMEZONE);
-			echo json_encode($ytdb->getQueries(strtotime("now"),false));
+			echo json_encode($ytdb->getQueries(strtotime("now"),false,getUserID()));
 			break;
 		case 'addquery':
 			$Vurl = null;
@@ -200,18 +232,37 @@ function getAjax(){
 				$Vurl = str_replace("\"", "", $Vurl);
 				$Vurl = str_replace("\\", "", $Vurl);
 				$Vurl = str_replace("'", "", $Vurl);
-				echo json_encode($ytdb->addQueryEntry($Vurl, $_SESSION["user"], $_POST['type'], $_POST['quality'], $_POST['from'],$_POST['to'],$_POST['zip']));
+				$qID = $ytdb->addQueryEntry($Vurl, getUserID(),$_POST['quality'], $_POST['from'],$_POST['to'],$_POST['split'],0);
+				if($qID > 0 ){
+					$return = array();
+					$return[\yayd\C_URL] = $Vurl;
+					$return[\yayd\C_Status] = \yayd\yaydDB::translateStatus(\yayd\CODE_WAITING,null);
+					$return[\yayd\C_Quality] = \yayd\yaydDB::quality2Name($_POST['quality']);
+					$return[\yayd\C_QID] = ( int ) $qID;
+					$return[\yayd\C_Progress] = '-';
+					$return[\yayd\C_Code] = null;
+					$return[\yayd\C_Name] = null;
+					echo json_encode($return);
+				}
 			}
 			break;
 		case 'LCQueries':
-			echo json_encode($ytdb->getQueries($_SESSION['ytdownl_luc'],true));
+			echo json_encode($ytdb->getQueries($_SESSION[LUC],true,getUserID()));
 			updateLUC();
 			break;
 		case 'get_files':
-			echo json_encode($ytdb->getFiles());
+			echo json_encode($ytdb->getFiles(getUserID()));
 			break;
 		case 'delete_file':
-			$ytdb->deleteFile($_POST['fid']);
+			$ytdb->deleteFile($_POST['fid'],getUserID());
+			break;
+		case 'clearCache':
+			global $vidfolder;
+			if(clearfolder($vidfolder)){
+				echo 'Cache cleared.';
+			}else{
+				echo 'Error by clearing cache!';
+			}
 			break;
 		case 'errorDetails':
 			echo $ytdb->getErrorDetails($_POST['qid']);
@@ -221,14 +272,22 @@ function getAjax(){
 			echo 'Case not found!';
 			break;
 	}
-	$ytdb->closeDB();
 }
 
+/**
+ * Update last update checked value
+ */
 function updateLUC(){
 	date_default_timezone_set(TIMEZONE);
-	$_SESSION['ytdownl_luc'] = strtotime("now");
+	$_SESSION[LUC] = strtotime("now");
 }
 
+/**
+ * Verify an url
+ * @param unknown $input input url
+ * @param unknown $type specified type
+ * @return string|NULL null on verification failure, otherwise the sanitized url
+ */
 function verifyUrl($input, $type){ // returns null when the verification fails
 	$input = str_replace('feature=player_embedded&','',$input);
 	if(strpos($input,REDIRECT_URL) !== false){
@@ -268,11 +327,19 @@ function verifyUrl($input, $type){ // returns null when the verification fails
 }
 
 //@Override
+function getTitle() {
+	return 'YT-Downloader';
+}
+
+/**
+ * Header content
+ */
+//@Override
 function getHead() {?>
 	<script src="js/jquery-ui-1.11.1.min.js" type="text/javascript"></script>
 	<link rel="Stylesheet" media="all" type="text/css" href="css/jquery-ui-1.11.1.min.css">
 	<script src="js/jquery.tablesorter.min.js" type="text/javascript"></script>
-	<script src="js/ytdownloader.js" type="text/javascript"></script>
+	<script src="js/yayd.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 	<style>
 	.progress {
@@ -295,8 +362,3 @@ function getHead() {?>
 	}
 	</style>
 <?php }
-
-function fileTypeMatch($input){ // returns true by mp3,mp4,flv,m4a
-	// \A(mp4|m4a|mp3|flv)\Z
-	return preg_match('/\\A(mp4|m4a|mp3|flv)\\Z/', $input) === 1;
-}
