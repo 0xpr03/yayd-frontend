@@ -1,5 +1,5 @@
 <?php
- - /*****************************************************************************
+ /*****************************************************************************
  - * Copyright (c) 2015, Aron Heinecke
  - * All rights reserved.
  - * 
@@ -10,7 +10,7 @@
  - * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  - ******************************************************************************/
 
-
+ 
 const REDIRECT_URL = 'https://www.youtube.com/redirect?q=';
 const PATTERN_PLAYLIST = '/\\A((https:\\/\\/|http:\\/\\/)|)((www\\.|m\\.)|)youtube\\.(com|de)\\/.*playlist\\?list=[a-zA-Z0-9_-]+/';
 const PATTERN_VID_PLAYLIST = '/\\A((https:\\/\\/|http:\\/\\/)|)((www\\.|m\\.)|)youtube\\.(com|de)\\/.*watch\\?v=[a-zA-Z0-9_-]+.*\\&list=([a-zA-Z0-9_-]+)/';
@@ -63,6 +63,7 @@ function getYTTemplate() {
 		<div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header" style="margin-top: 0px;">YT-Downloader</h1>
+					<h3>Version 0.6.3 Beta</h3>
                 </div>
 		</div>
 		AAC-HQ requires 720p<br>
@@ -75,48 +76,56 @@ function getYTTemplate() {
 			<div class="panel-body">
 			<div class="tab-content">
 				<div id="file" role="tabpanel" class="tab-pane active">
-					<fieldset style="width: auto;text-align:center;margin-left: auto;margin-right: auto;">
-						<div class="form-group input-group">
-							<span class="input-group-addon">
-								<select id="ytFEncoded">
-									<option value="-1">Music-mp3
-									<option value="-2">Music-AAC
-									<option value="-3">Music-AAC-HQ
-									<option value="303">1080@60fps-webm
-									<option value="298">720@60fps-mp4
-									<option value="137">1080-MP4
-									<option value="136">720-MP4
-									<option value="135" selected>480-MP4
-									<option value="134">360-MP4
-									<option value="133">240-MP4
-								</select>
-							</span>
+					<div class="row">
+						<div class="col-sm-4 col-xs-12 col-margin">
+							<select id="ytFEncoded" class="form-control">
+								<option value="-1">Music-mp3
+								<option value="-2">Music-AAC
+								<option value="-3">Music-AAC-HQ
+								<option value="303">1080@60fps-webm
+								<option value="298">720@60fps-mp4
+								<option value="137">1080-MP4
+								<option value="136">720-MP4
+								<option value="135" selected>480-MP4
+								<option value="134">360-MP4
+								<option value="133">240-MP4
+							</select>
+						</div>
+						<div class="col-sm-8 col-xs-12 col-margin">
 							<input class="form-control" type="text" placeholder="https://www.youtube.com/watch?v=" id="ytdownllink" autocomplete="off" required autofocus>
 						</div>
-						<div class="form-group input-group">
-							<span class="input-group-addon">
-								<select id="twFEncoded">
+					</div>
+					<div class="row">
+							<div class="col-sm-4 col-xs-12 col-margin">
+								<select id="twFEncoded" class="form-control">
 									<option value="-14">Source
 									<option value="-13" selected>High
 									<option value="-12">Medium
 									<option value="-11">Low
 									<option value="-10">Mobile
 								</select>
-							</span>
-							<input class="form-control" type="text" placeholder="http://www.twitch.tv/channel/v/" id="twdownllink" autocomplete="off" required autofocus>
-						</div>
-						<button type="button" id="GYT" class="btn btn-default" >
-							<i class="fa fa-plus"></i> Add
+							</div>
+							<div class="col-sm-8 col-xs-12 col-margin">
+								<input class="form-control" type="text" placeholder="http://www.twitch.tv/channel/v/" id="twdownllink" autocomplete="off" required autofocus>
+							</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4 col-xs-12 col-margin">
+						<button type="button" id="GYT" class="btn btn-default form-control" >
+								<i class="fa fa-plus"></i> Add
 						</button>
-						<input type="button" id="vidClear" class="btn btn-default" value="Clear">
-						<div id="ytcont" style="margin-top: 10px;"></div>
-					</fieldset>
+						</div>
+						<div class="col-sm-3 col-xs-12 col-margin">
+						<input type="button" id="vidClear" class="btn btn-default form-control" value="Clear">
+						</div>
+					</div>
+					<div id="ytcont" class="row"></div>
 				</div>
 				<div id="playlist" role="tabpanel" class="tab-pane" >
-					<fieldset style="width: auto;text-align:center;margin-left: auto;margin-right: auto;">
-						<div class="form-group input-group">
-							<span class="input-group-addon">
-								<select id="pl_ytFEncoded">
+					<!--<fieldset style="width: auto;text-align:center;margin-left: auto;margin-right: auto;">-->
+						<div class="row">
+							<div class="col-sm-4 col-xs-12 col-margin">
+								<select id="pl_ytFEncoded" class="form-control">
 									<option value="-1">Music-mp3
 									<option value="-2">Music-AAC
 									<option value="-3">Music-AAC-HQ
@@ -128,31 +137,43 @@ function getYTTemplate() {
 									<option value="134">360-MP4
 									<option value="133">240-MP4
 								</select>
-							</span>
-							<input class="form-control" type="text" placeholder="https://www.youtube.com/playlist?list=" id="pl_ytdownllink" autocomplete="off" required autofocus>
+							</div>
+							<div class="col-sm-8 col-xs-12 col-margin">
+								<input class="form-control" type="text" placeholder="https://www.youtube.com/playlist?list=" id="pl_ytdownllink" autocomplete="off" required autofocus>
+							</div>
 						</div>
-						<div class="form-group input-group">
-						<div class="form-group col-sm-3">
-							<label for="pl_from">From</label>
-							<input type="number" id="pl_from" value="-1" class="form-control col-sm-2" min="-1" step="1" data-bind="value:plFrom" />
-						</div>
-						<div class="form-group col-sm-3">
-							<label for="pl_to">To</label>
-							<input type="number" id="pl_to" value="-1" class="form-control col-sm-2" min="-1" step="1" data-bind="value:plTo" />
-						</div>
-						<div class="col-sm-3 checkbox">
-								<input type="checkbox" id="pl_split"><i class="fa fa-compress"></i> split jobs
+						<div class="row">
+							<div class="col-sm-2 col-xs-12 col-margin">
+								<div class="form-group">
+									<label for="pl_from" class="col-sm-2">From</label>
+									<input type="number" id="pl_from" value="-1" class="form-control col-sm-2" min="-1" step="1" data-bind="value:plFrom" />
+								</div>
+							</div>
+							<div class="col-sm-2 col-xs-12 col-margin">
+								<div class="form-group">
+									<label for="pl_to" class="col-sm-2">To</label>
+									<input type="number" id="pl_to" value="-1" class="form-control col-sm-2" min="-1" step="1" data-bind="value:plTo" />
+								</div>
+							</div>
+							<div class="col-sm-2 col-xs-12 col-margin">
+								<label>
+									<input type="checkbox" id="pl_split"><i class="fa fa-compress"></i>split jobs
+								</label>
 							</div>
 						</div>
 						
-						<div class="form-group">
-						<button type="button" id="pl_GYT" class="btn btn-default">
-							<i class="fa fa-plus"></i> Add
-						</button>
-						<input type="button" id="pl_ytClear" class="btn btn-default" value="Clear">
+						<div class="row">
+							<div class="col-sm-4 col-xs-12 col-margin">
+							<button type="button" id="pl_GYT" class="btn btn-default form-control">
+								<i class="fa fa-plus"></i> Add
+							</button>
+							</div>
+							<div class="col-sm-4 col-xs-12 col-margin">
+							<input type="button" id="pl_ytClear" class="btn btn-default form-control" value="Clear">
+							</div>
 						</div>
-						<div id="plcont" style="margin-top: 10px;"></div>
-					</fieldset>
+						<div id="plcont" class="row"></div>
+					<!--</fieldset>-->
 				</div>
 			</div>
 			</div>
@@ -360,5 +381,9 @@ function getHead() {?>
 	.tdErrbtn:active {
 		background-color: #E0E0E0;
 	}
+	.col-margin {
+		margin-bottom: 1em;
+	}
+	
 	</style>
 <?php }

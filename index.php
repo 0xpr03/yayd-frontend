@@ -18,7 +18,8 @@ if (true){ //DEBUG ONLY
 	error_reporting(E_ALL);
 	$info = 'Error-Log:On';
 }
-require_once 'includes/ytdownl.php';
+require_once 'includes/yayd.php';
+session_start();
 if(isset($_REQUEST['ajaxCont'])){
 	if (function_exists('getAjax')) {
 		echo getAjax();
